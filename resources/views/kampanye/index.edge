@@ -1,0 +1,169 @@
+@layout.app({ title: "Halaman Daftar Kampanye" })
+
+  @slot('meta')
+    <meta name="description" content="Halaman Daftar Kampanye" />
+  @endslot
+  
+  @slot('content')
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+              <i class="bi bi-megaphone me-2"></i>
+              Daftar Kampanye
+            </h5>
+            <a href="{{ route('kampanye.create') }}" class="btn btn-success">
+              <i class="bi bi-plus-circle me-1"></i>
+              Tambah Kampanye
+        </a>
+          </div>
+
+          <div class="card-body">
+            <form action="{{ route('kampanye.index') }}" method="GET" class="mb-3 row">
+              <div class="col-md-4">
+                <input
+                  type="text"
+                  name="search"
+                  class="form-control"
+                  placeholder="Cari kampanye..."
+                  autocomplete="off"
+                  value="{{ search ?? '' }}"
+                />
+              </div>
+              <div class="col-md-4">
+                <button class="btn btn-outline-primary">Cari</button>
+                @if(search != '')
+                  <a href="{{ route('kampanye.index') }}" class="btn btn-outline-danger">Reset</a>
+                @endif
+              </div>
+            </form>
+
+            <div class="table-responsive">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th width="5%">
+                      No
+                    </th>
+                    <th width="25%">
+                      Nama Kampanye
+                    </th>
+                    <th width="15%">
+                      Kategori
+                    </th>
+                    <th width="15%">
+                      Target
+                    </th>
+                    <th width="15%">
+                      Terkumpul
+                    </th>
+                    <th width="15%">
+                      Progress
+                    </th>
+                    <th width="10%">
+                      Aksi
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @each((kampanye, index) in kampanyes)
+                    @set('totalDonasi', await kampanye.related('transaksiDonasis').query().where('status', 'success').sum('donasi.jumlah'))
+                      <tr>
+                        <td>
+                          {{ ((kampanyes.currentPage - 1) * kampanyes.perPage) + index + 1 }}
+                        </td>
+                        <td>
+                          <strong>{{ kampanye.nama_kampanye }}</strong>
+                        </td>
+                        <td>
+                          {{ kampanye.kategori.nama_kategori }}
+                        </td>
+                        <td>
+                          Rp {{ kampanye.target.toLocaleString('id-ID') }}
+                        </td>
+                        <td>
+                          Rp {{ totalDonasi.toLocaleString('id-ID') }}
+                        </td>
+                        <td>
+                          @set('progress', (totalDonasi / kampanye.target) * 100)
+                            <div class="progress" style="height: 20px;">
+                              <div
+                                class="progress-bar bg-success"
+                                role="progressbar"
+                                style="width: {{ progress }}%"
+                                aria-valuenow="{{ progress }}"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                              >
+                                {{ Math.round(progress) }}%
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <div class="btn-group" role="group">
+                              <a
+                                href="{{ route('kampanye.show', [kampanye.id]) }}"
+                                class="btn btn-sm btn-outline-info"
+                                title="Lihat Detail"
+                              >
+                                <i class="bi bi-eye"></i>
+                              </a>
+                              <a
+                                href="{{ route('kampanye.edit', [kampanye.id]) }}"
+                                class="btn btn-sm btn-outline-warning"
+                                title="Edit"
+                              >
+                                <i class="bi bi-pencil"></i>
+                              </a>
+                              <form
+                                method="POST"
+                                action="{{ route('kampanye.destroy', [kampanye.id]) }}"
+                                style="display: inline;"
+                                onsubmit="event.preventDefault(); confirmDelete(this);"
+                              >
+                                <input type="hidden" name="_method" value="POST" />
+                                {{ csrfField() }}
+                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
+                                  <i class="bi bi-trash"></i>
+                                </button>
+                              </form>
+                            </div>
+                          </td>
+                        </tr>
+                      @endeach
+                    </tbody>
+                  </table>
+
+                  <hr />
+
+                  @if(kampanyes.lastPage > 1)
+                    <div class="d-flex justify-content-center mt-4">
+                      <nav>
+                        <ul class="pagination">
+                          @each(page in [...Array(kampanyes.lastPage).keys()].map(n => n + 1))
+                            <li class="page-item {{ page === kampanyes.currentPage ? 'active' : '' }}">
+                              @if(search == '')
+                                <a class="page-link" href="{{ route('kampanye.index', {}, { qs: { page: page } }) }}">
+                                  {{ page }}
+                        </a>
+                              @else
+                                <a
+                                  class="page-link"
+                                  href="{{ route('kampanye.index', {}, { qs: { page: page, search: search || '' } }) }}"
+                                >
+                                  {{ page }}
+                        </a>
+                              @endif
+                            </li>
+                          @endeach
+                        </ul>
+                      </nav>
+                    </div>
+                  @endif
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      @endslot

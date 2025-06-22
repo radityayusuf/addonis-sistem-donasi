@@ -1,0 +1,152 @@
+@layout.app({ title: "Halaman Daftar Donatur" })
+
+  @slot('meta')
+    <meta name="description" content="Halaman Daftar Donatur" />
+  @endslot
+  
+  @slot('content')
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+              <i class="bi bi-people me-2"></i>
+              Daftar Donatur
+            </h5>
+            <a href="{{ route('donatur.create') }}" class="btn btn-success">
+              <i class="bi bi-plus-circle me-1"></i>
+              Tambah Donatur
+        </a>
+          </div>
+
+          <div class="card-body">
+            <form action="{{ route('donatur.index') }}" method="GET" class="mb-3 row">
+              <div class="col-md-4">
+                <input
+                  type="text"
+                  name="search"
+                  class="form-control"
+                  placeholder="Cari donatur..."
+                  autocomplete="off"
+                  value="{{ search ?? '' }}"
+                />
+              </div>
+              <div class="col-md-4">
+                <button class="btn btn-outline-primary">Cari</button>
+                @if(search != '')
+                  <a href="{{ route('donatur.index') }}" class="btn btn-outline-danger">Reset</a>
+                @endif
+              </div>
+            </form>
+
+            <div class="table-responsive">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th width="5%">
+                      No
+                    </th>
+                    <th width="25%">
+                      Nama
+                    </th>
+                    <th width="25%">
+                      Email
+                    </th>
+                    <th width="20%">
+                      Telepon
+                    </th>
+                    <th width="15%">
+                      Tanggal Dibuat
+                    </th>
+                    <th width="10%">
+                      Aksi
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @each((donatur, index) in donaturs)
+                    <tr>
+                      <td>
+                        {{ ((donaturs.currentPage - 1) * donaturs.perPage) + index + 1 }}
+                      </td>
+                      <td>
+                        <strong>{{ donatur.nama }}</strong>
+                      </td>
+                      <td>
+                        {{ donatur.email }}
+                      </td>
+                      <td>
+                        {{ donatur.telepon }}
+                      </td>
+                      <td>
+                        <small class="text-muted">
+                          {{ donatur.createdAt.toFormat('dd/MM/yyyy HH:mm') }}
+                    </small>
+                      </td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a
+                            href="{{ route('donatur.show', [donatur.id]) }}"
+                            class="btn btn-sm btn-outline-info"
+                            title="Lihat Detail"
+                          >
+                            <i class="bi bi-eye"></i>
+                          </a>
+                          <a
+                            href="{{ route('donatur.edit', [donatur.id]) }}"
+                            class="btn btn-sm btn-outline-warning"
+                            title="Edit"
+                          >
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <form
+                            method="POST"
+                            action="{{ route('donatur.destroy', [donatur.id]) }}"
+                            style="display: inline;"
+                            onsubmit="event.preventDefault(); confirmDelete(this);"
+                          >
+                            <input type="hidden" name="_method" value="POST" />
+                            {{ csrfField() }}
+                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                  @endeach
+                </tbody>
+              </table>
+
+              <hr />
+
+              @if(donaturs.lastPage > 1)
+                <div class="d-flex justify-content-center mt-4">
+                  <nav>
+                    <ul class="pagination">
+                      @each(page in [...Array(donaturs.lastPage).keys()].map(n => n + 1))
+                        <li class="page-item {{ page === donaturs.currentPage ? 'active' : '' }}">
+                          @if(search == '')
+                            <a class="page-link" href="{{ route('donatur.index', {}, { qs: { page: page } }) }}">
+                              {{ page }}
+                        </a>
+                          @else
+                            <a
+                              class="page-link"
+                              href="{{ route('donatur.index', {}, { qs: { page: page, search: search || '' } }) }}"
+                            >
+                              {{ page }}
+                        </a>
+                          @endif
+                        </li>
+                      @endeach
+                    </ul>
+                  </nav>
+                </div>
+              @endif
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  @endslot

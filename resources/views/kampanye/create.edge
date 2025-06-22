@@ -1,0 +1,105 @@
+@layout.app({ title: "Halaman Tambah Kampanye" })
+
+  @slot('meta')
+    <meta name="description" content="Halaman Tambah Kampanye" />
+  @endslot
+  
+  @slot('content')
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="bi bi-plus-circle me-2"></i>
+              Tambah Kampanye Baru
+            </h5>
+          </div>
+
+          <div class="card-body">
+            <form method="POST" action="{{ route('kampanye.store') }}">
+              {{ csrfField() }}
+              <div class="mb-3">
+                <label for="nama_kampanye" class="form-label">
+                  Nama Kampanye <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="text"
+                  class="form-control {{ flashMessages.get('errors') && flashMessages.get('errors').find(e => e.field == 'nama_kampanye') ? 'is-invalid' : '' }}"
+                  id="nama_kampanye"
+                  name="nama_kampanye"
+                  placeholder="Masukkan nama kampanye"
+                  value="{{ flashMessages.get('old.nama_kampanye', '') }}"
+                />
+                @if(flashMessages.get('errors') && flashMessages.get('errors').find(e => e.field == 'nama_kampanye'))
+                  <div class="invalid-feedback">
+                    {{ flashMessages.get('errors').find(e => e.field == 'nama_kampanye').message }}
+                  </div>
+                @endif
+              </div>
+
+              <div class="mb-3">
+                <label for="kategori_id" class="form-label">
+                  Kategori <span class="text-danger">*</span>
+                </label>
+                <select
+                  class="form-select {{ flashMessages.get('errors') && flashMessages.get('errors').find(e => e.field == 'kategori_id') ? 'is-invalid' : '' }}"
+                  id="kategori_id"
+                  name="kategori_id"
+                  required
+                >
+                  <option value="">
+                    Pilih Kategori
+                  </option>
+                  @each(kategori in kategoris)
+                    <option
+                      value="{{ kategori.id }}"
+                      {{ flashMessages.get('old.kategori_id') == kategori.id ? 'selected' : '' }}
+                    >
+                      {{ kategori.nama_kategori }}
+                    </option>
+                  @endeach
+                </select>
+                @if(flashMessages.get('errors') && flashMessages.get('errors').find(e => e.field == 'kategori_id'))
+                  <div class="invalid-feedback">
+                    {{ flashMessages.get('errors').find(e => e.field == 'kategori_id').message }}
+                  </div>
+                @endif
+              </div>
+
+              <div class="mb-3">
+                <label for="target" class="form-label">
+                  Target (Rp) <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="number"
+                  class="form-control {{ flashMessages.get('errors') && flashMessages.get('errors').find(e => e.field == 'target') ? 'is-invalid' : '' }}"
+                  id="target"
+                  name="target"
+                  placeholder="Masukkan target donasi"
+                  value="{{ flashMessages.get('old.target', '') }}"
+                  min="100000"
+                  required
+                />
+                @if(flashMessages.get('errors') && flashMessages.get('errors').find(e => e.field == 'target'))
+                  <div class="invalid-feedback">
+                    {{ flashMessages.get('errors').find(e => e.field == 'target').message }}
+                  </div>
+                @endif
+              </div>
+
+              <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-check-circle me-1"></i>
+                  Simpan Kampanye
+            </button>
+                <a href="{{ route('kampanye.index') }}" class="btn btn-secondary">
+                  <i class="bi bi-arrow-left me-1"></i>
+                  Kembali
+            </a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  @endslot

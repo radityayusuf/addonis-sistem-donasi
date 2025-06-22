@@ -1,0 +1,166 @@
+@layout.app({ title: "Halaman Daftar Donasi" })
+
+  @slot('meta')
+    <meta name="description" content="Halaman Daftar Donasi" />
+  @endslot
+  
+  @slot('content')
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+              <i class="bi bi-cash-coin me-2"></i>
+              Daftar Donasi
+            </h5>
+            <a href="{{ route('donasi.create') }}" class="btn btn-success">
+              <i class="bi bi-plus-circle me-1"></i>
+              Tambah Donasi
+        </a>
+          </div>
+
+          <div class="card-body">
+            <form action="{{ route('donasi.index') }}" method="GET" class="mb-3 row">
+              <div class="col-md-4">
+                <input
+                  type="text"
+                  name="search"
+                  class="form-control"
+                  placeholder="Cari donasi..."
+                  autocomplete="off"
+                  value="{{ search ?? '' }}"
+                />
+              </div>
+              <div class="col-md-4">
+                <button class="btn btn-outline-primary">Cari</button>
+                @if(search != '')
+                  <a href="{{ route('donasi.index') }}" class="btn btn-outline-danger">Reset</a>
+                @endif
+              </div>
+            </form>
+
+            <div class="table-responsive">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th width="5%">
+                      No
+                    </th>
+                    <th width="20%">
+                      Donatur
+                    </th>
+                    <th width="15%">
+                      Kategori
+                    </th>
+                    <th width="15%">
+                      Jumlah
+                    </th>
+                    <th width="15%">
+                      Tanggal
+                    </th>
+                    <th width="15%">
+                      Status
+                    </th>
+                    <th width="15%">
+                      Aksi
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @each((donasi, index) in donasis)
+                    <tr>
+                      <td>
+                        {{ ((donasis.currentPage - 1) * donasis.perPage) + index + 1 }}
+                      </td>
+                      <td>
+                        {{ donasi.donatur.nama }}
+                      </td>
+                      <td>
+                        {{ donasi.kategori.nama_kategori }}
+                      </td>
+                      <td>
+                        Rp {{ donasi.jumlah.toLocaleString('id-ID') }}
+                      </td>
+                      <td>
+                        {{ donasi.tanggal }}
+                      </td>
+                      <td>
+                        @if(donasi.transaksiDonasis.length > 0)
+                          @if(donasi.transaksiDonasis[0].status === 'success')
+                            <span class="badge bg-success">Berhasil</span>
+                          @elseif(donasi.transaksiDonasis[0].status === 'pending')
+                            <span class="badge bg-warning text-dark">Pending</span>
+                          @else
+                            <span class="badge bg-danger">Gagal</span>
+                          @endif
+                        @else
+                          <span class="badge bg-secondary">Belum Diproses</span>
+                        @endif
+                      </td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a
+                            href="{{ route('donasi.show', [donasi.id]) }}"
+                            class="btn btn-sm btn-outline-info"
+                            title="Lihat Detail"
+                          >
+                            <i class="bi bi-eye"></i>
+                          </a>
+                          <a
+                            href="{{ route('donasi.edit', [donasi.id]) }}"
+                            class="btn btn-sm btn-outline-warning"
+                            title="Edit"
+                          >
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <form
+                            method="POST"
+                            action="{{ route('donasi.destroy', [donasi.id]) }}"
+                            style="display: inline;"
+                            onsubmit="event.preventDefault(); confirmDelete(this);"
+                          >
+                            <input type="hidden" name="_method" value="POST" />
+                            {{ csrfField() }}
+                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                  @endeach
+                </tbody>
+              </table>
+
+              <hr />
+
+              @if(donasis.lastPage > 1)
+                <div class="d-flex justify-content-center mt-4">
+                  <nav>
+                    <ul class="pagination">
+                      @each(page in [...Array(donasis.lastPage).keys()].map(n => n + 1))
+                        <li class="page-item {{ page === donasis.currentPage ? 'active' : '' }}">
+                          @if(search == '')
+                            <a class="page-link" href="{{ route('donasi.index', {}, { qs: { page: page } }) }}">
+                              {{ page }}
+                        </a>
+                          @else
+                            <a
+                              class="page-link"
+                              href="{{ route('donasi.index', {}, { qs: { page: page, search: search || '' } }) }}"
+                            >
+                              {{ page }}
+                        </a>
+                          @endif
+                        </li>
+                      @endeach
+                    </ul>
+                  </nav>
+                </div>
+              @endif
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  @endslot

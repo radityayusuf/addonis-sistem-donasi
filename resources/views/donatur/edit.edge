@@ -1,0 +1,113 @@
+@layout.app({ title: "Halaman Edit Donatur" })
+
+  @slot('meta')
+    <meta name="description" content="Halaman Edit Donatur" />
+  @endslot
+  
+  @slot('content')
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="bi bi-pencil me-2"></i>
+              Edit Donatur
+            </h5>
+          </div>
+
+          <div class="card-body">
+            <form method="POST" action="{{ route('donatur.update', [donatur.id]) }}">
+              {{ csrfField() }}
+              <div class="mb-3">
+                <label for="nama" class="form-label">
+                  Nama <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="nama"
+                  name="nama"
+                  value="{{ donatur.nama }}"
+                  placeholder="Masukkan nama donatur"
+                  required
+                />
+                @if(flashMessages.has('errors.nama'))
+                  <div class="invalid-feedback">
+                    {{ flashMessages.get('errors.nama') }}
+                  </div>
+                @endif
+              </div>
+
+              <div class="mb-3">
+                <label for="email" class="form-label">
+                  Email <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  name="email"
+                  value="{{ donatur.email }}"
+                  placeholder="Masukkan email donatur"
+                  required
+                />
+                @if(flashMessages.has('errors.email'))
+                  <div class="invalid-feedback">
+                    {{ flashMessages.get('errors.email') }}
+                  </div>
+                @endif
+              </div>
+
+              <div class="mb-3">
+                <label for="telepon" class="form-label">
+                  Telepon <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="telepon"
+                  name="telepon"
+                  value="{{ donatur.telepon }}"
+                  placeholder="Masukkan nomor telepon"
+                  required
+                />
+                @if(flashMessages.has('errors.telepon'))
+                  <div class="invalid-feedback">
+                    {{ flashMessages.get('errors.telepon') }}
+                  </div>
+                @endif
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="card bg-light">
+                    <div class="card-body">
+                      <h6 class="card-title">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Informasi Data
+                      </h6>
+                      <small class="text-muted">
+                        <strong>Dibuat:</strong>{{ donatur.createdAt.toFormat('dd/MM/yyyy HH:mm') }}<br />
+                        <strong>Diperbarui:</strong>{{ donatur.updatedAt.toFormat('dd/MM/yyyy HH:mm') }}
+                  </small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-grid gap-2 d-md-flex justify-content-md-between mt-3">
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-check-circle me-1"></i>
+                  Perbarui Donatur
+            </button>
+                <a href="{{ route('donatur.index') }}" class="btn btn-secondary">
+                  <i class="bi bi-arrow-left me-1"></i>
+                  Kembali
+            </a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  @endslot

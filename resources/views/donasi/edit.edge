@@ -1,0 +1,134 @@
+@layout.app({ title: "Halaman Edit Donasi" })
+
+  @slot('meta')
+    <meta name="description" content="Halaman Edit Donasi" />
+  @endslot
+  
+  @slot('content')
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="bi bi-pencil me-2"></i>
+              Edit Donasi
+            </h5>
+          </div>
+
+          <div class="card-body">
+            <form method="POST" action="{{ route('donasi.update', [donasi.id]) }}">
+              {{ csrfField() }}
+              <div class="mb-3">
+                <label for="donatur_id" class="form-label">
+                  Donatur <span class="text-danger">*</span>
+                </label>
+                <select class="form-select" id="donatur_id" name="donatur_id" required>
+                  <option value="">
+                    Pilih Donatur
+                  </option>
+                  @each(donatur in donaturs)
+                    <option value="{{ donatur.id }}" {{ donasi.donatur_id == donatur.id ? 'selected' : '' }}>
+                      {{ donatur.nama }} ({{ donatur.email }})
+                    </option>
+                  @endeach
+                </select>
+                @if(flashMessages.has('errors.donatur_id'))
+                  <div class="invalid-feedback">
+                    {{ flashMessages.get('errors.donatur_id') }}
+                  </div>
+                @endif
+              </div>
+
+              <div class="mb-3">
+                <label for="kategori_id" class="form-label">
+                  Kategori <span class="text-danger">*</span>
+                </label>
+                <select class="form-select" id="kategori_id" name="kategori_id" required>
+                  <option value="">
+                    Pilih Kategori
+                  </option>
+                  @each(kategori in kategoris)
+                    <option value="{{ kategori.id }}" {{ donasi.kategori_id == kategori.id ? 'selected' : '' }}>
+                      {{ kategori.nama_kategori }}
+                    </option>
+                  @endeach
+                </select>
+                @if(flashMessages.has('errors.kategori_id'))
+                  <div class="invalid-feedback">
+                    {{ flashMessages.get('errors.kategori_id') }}
+                  </div>
+                @endif
+              </div>
+
+              <div class="mb-3">
+                <label for="jumlah" class="form-label">
+                  Jumlah (Rp) <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="jumlah"
+                  name="jumlah"
+                  value="{{ donasi.jumlah }}"
+                  min="1000"
+                  required
+                />
+                @if(flashMessages.has('errors.jumlah'))
+                  <div class="invalid-feedback">
+                    {{ flashMessages.get('errors.jumlah') }}
+                  </div>
+                @endif
+              </div>
+
+              <div class="mb-3">
+                <label for="tanggal" class="form-label">
+                  Tanggal <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="tanggal"
+                  name="tanggal"
+                  value="{{ donasi.tanggal }}"
+                  required
+                />
+                @if(flashMessages.has('errors.tanggal'))
+                  <div class="invalid-feedback">
+                    {{ flashMessages.get('errors.tanggal') }}
+                  </div>
+                @endif
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="card bg-light">
+                    <div class="card-body">
+                      <h6 class="card-title">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Informasi Data
+                      </h6>
+                      <small class="text-muted">
+                        <strong>Dibuat:</strong>{{ donasi.createdAt.toFormat('dd/MM/yyyy HH:mm') }}<br />
+                        <strong>Diperbarui:</strong>{{ donasi.updatedAt.toFormat('dd/MM/yyyy HH:mm') }}
+                  </small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-grid gap-2 d-md-flex justify-content-md-between mt-3">
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-check-circle me-1"></i>
+                  Perbarui Donasi
+            </button>
+                <a href="{{ route('donasi.index') }}" class="btn btn-secondary">
+                  <i class="bi bi-arrow-left me-1"></i>
+                  Kembali
+            </a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  @endslot

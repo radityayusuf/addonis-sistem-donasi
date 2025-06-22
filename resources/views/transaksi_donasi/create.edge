@@ -1,0 +1,121 @@
+@layout.app({ title: "Halaman Tambah Transaksi Donasi" })
+
+  @slot('meta')
+    <meta name="description" content="Halaman Tambah Transaksi Donasi" />
+  @endslot
+  
+  @slot('content')
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="bi bi-plus-circle me-2"></i>
+              Tambah Transaksi Donasi Baru
+            </h5>
+          </div>
+
+          <div class="card-body">
+            <form method="POST" action="{{ route('transaksi_donasi.store') }}">
+              {{ csrfField() }}
+              <div class="mb-3">
+                <label for="donasi_id" class="form-label">
+                  Donasi <span class="text-danger">*</span>
+                </label>
+                <select
+                  class="form-select {{ flashMessages.get('errors') && flashMessages.get('errors').find(e => e.field == 'donasi_id') ? 'is-invalid' : '' }}"
+                  id="donasi_id"
+                  name="donasi_id"
+                  required
+                >
+                  <option value="">
+                    Pilih Donasi
+                  </option>
+                  @each(donasi in donasis)
+                    <option value="{{ donasi.id }}" {{ flashMessages.get('old.donasi_id') == donasi.id ? 'selected' : '' }}>
+                      {{ donasi.donatur.nama }} - Rp {{ donasi.jumlah.toLocaleString('id-ID') }} ({{ donasi.tanggal }})
+                    </option>
+                  @endeach
+                </select>
+                @if(flashMessages.get('errors') && flashMessages.get('errors').find(e => e.field == 'donasi_id'))
+                  <div class="invalid-feedback">
+                    {{ flashMessages.get('errors').find(e => e.field == 'donasi_id').message }}
+                  </div>
+                @endif
+              </div>
+
+              <div class="mb-3">
+                <label for="kampanye_id" class="form-label">
+                  Kampanye <span class="text-danger">*</span>
+                </label>
+                <select
+                  class="form-select {{ flashMessages.get('errors') && flashMessages.get('errors').find(e => e.field == 'kampanye_id') ? 'is-invalid' : '' }}"
+                  id="kampanye_id"
+                  name="kampanye_id"
+                  required
+                >
+                  <option value="">
+                    Pilih Kampanye
+                  </option>
+                  @each(kampanye in kampanyes)
+                    <option
+                      value="{{ kampanye.id }}"
+                      {{ flashMessages.get('old.kampanye_id') == kampanye.id ? 'selected' : '' }}
+                    >
+                      {{ kampanye.nama_kampanye }} (Target: Rp {{ kampanye.target.toLocaleString('id-ID') }})
+                    </option>
+                  @endeach
+                </select>
+                @if(flashMessages.get('errors') && flashMessages.get('errors').find(e => e.field == 'kampanye_id'))
+                  <div class="invalid-feedback">
+                    {{ flashMessages.get('errors').find(e => e.field == 'kampanye_id').message }}
+                  </div>
+                @endif
+              </div>
+
+              <div class="mb-3">
+                <label for="status" class="form-label">
+                  Status <span class="text-danger">*</span>
+                </label>
+                <select
+                  class="form-select {{ flashMessages.get('errors') && flashMessages.get('errors').find(e => e.field == 'status') ? 'is-invalid' : '' }}"
+                  id="status"
+                  name="status"
+                  required
+                >
+                  <option value="">
+                    Pilih Status
+                  </option>
+                  <option value="pending" {{ flashMessages.get('old.status') == 'pending' ? 'selected' : '' }}>
+                    Pending
+                  </option>
+                  <option value="success" {{ flashMessages.get('old.status') == 'success' ? 'selected' : '' }}>
+                    Success
+                  </option>
+                  <option value="failed" {{ flashMessages.get('old.status') == 'failed' ? 'selected' : '' }}>
+                    Failed
+                  </option>
+                </select>
+                @if(flashMessages.get('errors') && flashMessages.get('errors').find(e => e.field == 'status'))
+                  <div class="invalid-feedback">
+                    {{ flashMessages.get('errors').find(e => e.field == 'status').message }}
+                  </div>
+                @endif
+              </div>
+
+              <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-check-circle me-1"></i>
+                  Simpan Transaksi
+            </button>
+                <a href="{{ route('transaksi_donasi.index') }}" class="btn btn-secondary">
+                  <i class="bi bi-arrow-left me-1"></i>
+                  Kembali
+            </a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  @endslot

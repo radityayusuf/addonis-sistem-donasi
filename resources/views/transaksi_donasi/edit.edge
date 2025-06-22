@@ -1,0 +1,120 @@
+@layout.app({ title: "Halaman Edit Transaksi Donasi" })
+
+  @slot('meta')
+    <meta name="description" content="Halaman Edit Transaksi Donasi" />
+  @endslot
+  
+  @slot('content')
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="bi bi-pencil me-2"></i>
+              Edit Transaksi Donasi
+            </h5>
+          </div>
+
+          <div class="card-body">
+            <form method="POST" action="{{ route('transaksi_donasi.update', [transaksiDonasi.id]) }}">
+              {{ csrfField() }}
+              <div class="mb-3">
+                <label for="donasi_id" class="form-label">
+                  Donasi <span class="text-danger">*</span>
+                </label>
+                <select class="form-select" id="donasi_id" name="donasi_id" required>
+                  <option value="">
+                    Pilih Donasi
+                  </option>
+                  @each(donasi in donasis)
+                    <option value="{{ donasi.id }}" {{ transaksiDonasi.donasi_id == donasi.id ? 'selected' : '' }}>
+                      {{ donasi.donatur.nama }} - Rp {{ donasi.jumlah.toLocaleString('id-ID') }} ({{ donasi.tanggal }})
+                    </option>
+                  @endeach
+                </select>
+                @if(flashMessages.has('errors.donasi_id'))
+                  <div class="invalid-feedback">
+                    {{ flashMessages.get('errors.donasi_id') }}
+                  </div>
+                @endif
+              </div>
+
+              <div class="mb-3">
+                <label for="kampanye_id" class="form-label">
+                  Kampanye <span class="text-danger">*</span>
+                </label>
+                <select class="form-select" id="kampanye_id" name="kampanye_id" required>
+                  <option value="">
+                    Pilih Kampanye
+                  </option>
+                  @each(kampanye in kampanyes)
+                    <option value="{{ kampanye.id }}" {{ transaksiDonasi.kampanye_id == kampanye.id ? 'selected' : '' }}>
+                      {{ kampanye.nama_kampanye }} (Target: Rp {{ kampanye.target.toLocaleString('id-ID') }})
+                    </option>
+                  @endeach
+                </select>
+                @if(flashMessages.has('errors.kampanye_id'))
+                  <div class="invalid-feedback">
+                    {{ flashMessages.get('errors.kampanye_id') }}
+                  </div>
+                @endif
+              </div>
+
+              <div class="mb-3">
+                <label for="status" class="form-label">
+                  Status <span class="text-danger">*</span>
+                </label>
+                <select class="form-select" id="status" name="status" required>
+                  <option value="">
+                    Pilih Status
+                  </option>
+                  <option value="pending" {{ transaksiDonasi.status == 'pending' ? 'selected' : '' }}>
+                    Pending
+                  </option>
+                  <option value="success" {{ transaksiDonasi.status == 'success' ? 'selected' : '' }}>
+                    Success
+                  </option>
+                  <option value="failed" {{ transaksiDonasi.status == 'failed' ? 'selected' : '' }}>
+                    Failed
+                  </option>
+                </select>
+                @if(flashMessages.has('errors.status'))
+                  <div class="invalid-feedback">
+                    {{ flashMessages.get('errors.status') }}
+                  </div>
+                @endif
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="card bg-light">
+                    <div class="card-body">
+                      <h6 class="card-title">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Informasi Data
+                      </h6>
+                      <small class="text-muted">
+                        <strong>Dibuat:</strong>{{ transaksiDonasi.createdAt.toFormat('dd/MM/yyyy HH:mm') }}<br />
+                        <strong>Diperbarui:</strong>{{ transaksiDonasi.updatedAt.toFormat('dd/MM/yyyy HH:mm') }}
+                  </small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-grid gap-2 d-md-flex justify-content-md-between mt-3">
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-check-circle me-1"></i>
+                  Perbarui Transaksi
+            </button>
+                <a href="{{ route('transaksi_donasi.index') }}" class="btn btn-secondary">
+                  <i class="bi bi-arrow-left me-1"></i>
+                  Kembali
+            </a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  @endslot

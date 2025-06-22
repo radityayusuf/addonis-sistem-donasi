@@ -1,0 +1,164 @@
+@layout.app({ title: "Halaman Daftar Transaksi Donasi" })
+
+  @slot('meta')
+    <meta name="description" content="Halaman Daftar Transaksi Donasi" />
+  @endslot
+  
+  @slot('content')
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+              <i class="bi bi-credit-card me-2"></i>
+              Daftar Transaksi Donasi
+            </h5>
+            <a href="{{ route('transaksi_donasi.create') }}" class="btn btn-success">
+              <i class="bi bi-plus-circle me-1"></i>
+              Tambah Transaksi
+        </a>
+          </div>
+
+          <div class="card-body">
+            <form action="{{ route('transaksi_donasi.index') }}" method="GET" class="mb-3 row">
+              <div class="col-md-4">
+                <input
+                  type="text"
+                  name="search"
+                  class="form-control"
+                  placeholder="Cari transaksi..."
+                  autocomplete="off"
+                  value="{{ search ?? '' }}"
+                />
+              </div>
+              <div class="col-md-4">
+                <button class="btn btn-outline-primary">Cari</button>
+                @if(search != '')
+                  <a href="{{ route('transaksi_donasi.index') }}" class="btn btn-outline-danger">Reset</a>
+                @endif
+              </div>
+            </form>
+
+            <div class="table-responsive">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th width="5%">
+                      No
+                    </th>
+                    <th width="20%">
+                      Donatur
+                    </th>
+                    <th width="20%">
+                      Kampanye
+                    </th>
+                    <th width="15%">
+                      Jumlah
+                    </th>
+                    <th width="15%">
+                      Status
+                    </th>
+                    <th width="15%">
+                      Tanggal
+                    </th>
+                    <th width="10%">
+                      Aksi
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @each((transaksi, index) in transaksiDonasis)
+                    <tr>
+                      <td>
+                        {{ ((transaksiDonasis.currentPage - 1) * transaksiDonasis.perPage) + index + 1 }}
+                      </td>
+                      <td>
+                        {{ transaksi.donasi.donatur.nama }}
+                      </td>
+                      <td>
+                        {{ transaksi.kampanye.nama_kampanye }}
+                      </td>
+                      <td>
+                        Rp {{ transaksi.donasi.jumlah.toLocaleString('id-ID') }}
+                      </td>
+                      <td>
+                        @if(transaksi.status === 'success')
+                          <span class="badge bg-success">Berhasil</span>
+                        @elseif(transaksi.status === 'pending')
+                          <span class="badge bg-warning text-dark">Pending</span>
+                        @else
+                          <span class="badge bg-danger">Gagal</span>
+                        @endif
+                      </td>
+                      <td>
+                        <small class="text-muted">
+                          {{ transaksi.createdAt.toFormat('dd/MM/yyyy HH:mm') }}
+                    </small>
+                      </td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a
+                            href="{{ route('transaksi_donasi.show', [transaksi.id]) }}"
+                            class="btn btn-sm btn-outline-info"
+                            title="Lihat Detail"
+                          >
+                            <i class="bi bi-eye"></i>
+                          </a>
+                          <a
+                            href="{{ route('transaksi_donasi.edit', [transaksi.id]) }}"
+                            class="btn btn-sm btn-outline-warning"
+                            title="Edit"
+                          >
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <form
+                            method="POST"
+                            action="{{ route('transaksi_donasi.destroy', [transaksi.id]) }}"
+                            style="display: inline;"
+                            onsubmit="event.preventDefault(); confirmDelete(this);"
+                          >
+                            <input type="hidden" name="_method" value="POST" />
+                            {{ csrfField() }}
+                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                  @endeach
+                </tbody>
+              </table>
+
+              <hr />
+
+              @if(transaksiDonasis.lastPage > 1)
+                <div class="d-flex justify-content-center mt-4">
+                  <nav>
+                    <ul class="pagination">
+                      @each(page in [...Array(transaksiDonasis.lastPage).keys()].map(n => n + 1))
+                        <li class="page-item {{ page === transaksiDonasis.currentPage ? 'active' : '' }}">
+                          @if(search == '')
+                            <a class="page-link" href="{{ route('transaksi_donasi.index', {}, { qs: { page: page } }) }}">
+                              {{ page }}
+                        </a>
+                          @else
+                            <a
+                              class="page-link"
+                              href="{{ route('transaksi_donasi.index', {}, { qs: { page: page, search: search || '' } }) }}"
+                            >
+                              {{ page }}
+                        </a>
+                          @endif
+                        </li>
+                      @endeach
+                    </ul>
+                  </nav>
+                </div>
+              @endif
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  @endslot

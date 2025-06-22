@@ -1,0 +1,93 @@
+@layout.app({ title: "Halaman Tambah Donatur" })
+
+  @slot('meta')
+    <meta name="description" content="Halaman Tambah Donatur" />
+  @endslot
+  
+  @slot('content')
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="bi bi-plus-circle me-2"></i>
+              Tambah Donatur Baru
+            </h5>
+          </div>
+
+          <div class="card-body">
+            <form method="POST" action="{{ route('donatur.store') }}">
+              {{ csrfField() }}
+              <div class="mb-3">
+                <label for="nama" class="form-label">
+                  Nama <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="text"
+                  class="form-control {{ flashMessages.get('errors') && flashMessages.get('errors').find(e => e.field == 'nama') ? 'is-invalid' : '' }}"
+                  id="nama"
+                  name="nama"
+                  placeholder="Masukkan nama donatur"
+                  value="{{ flashMessages.get('old.nama', '') }}"
+                />
+                @if(flashMessages.get('errors') && flashMessages.get('errors').find(e => e.field == 'nama'))
+                  <div class="invalid-feedback">
+                    {{ flashMessages.get('errors').find(e => e.field == 'nama').message }}
+                  </div>
+                @endif
+              </div>
+
+              <div class="mb-3">
+                <label for="email" class="form-label">
+                  Email <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="email"
+                  class="form-control {{ flashMessages.get('errors') && flashMessages.get('errors').find(e => e.field == 'email') ? 'is-invalid' : '' }}"
+                  id="email"
+                  name="email"
+                  placeholder="Masukkan email donatur"
+                  value="{{ flashMessages.get('old.email', '') }}"
+                />
+                @if(flashMessages.get('errors') && flashMessages.get('errors').find(e => e.field == 'email'))
+                  <div class="invalid-feedback">
+                    {{ flashMessages.get('errors').find(e => e.field == 'email').message }}
+                  </div>
+                @endif
+              </div>
+
+              <div class="mb-3">
+                <label for="telepon" class="form-label">
+                  Telepon <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="text"
+                  class="form-control {{ flashMessages.get('errors') && flashMessages.get('errors').find(e => e.field == 'telepon') ? 'is-invalid' : '' }}"
+                  id="telepon"
+                  name="telepon"
+                  placeholder="Masukkan nomor telepon"
+                  value="{{ flashMessages.get('old.telepon', '') }}"
+                />
+                @if(flashMessages.get('errors') && flashMessages.get('errors').find(e => e.field == 'telepon'))
+                  <div class="invalid-feedback">
+                    {{ flashMessages.get('errors').find(e => e.field == 'telepon').message }}
+                  </div>
+                @endif
+              </div>
+
+              <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-check-circle me-1"></i>
+                  Simpan Donatur
+            </button>
+                <a href="{{ route('donatur.index') }}" class="btn btn-secondary">
+                  <i class="bi bi-arrow-left me-1"></i>
+                  Kembali
+            </a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  @endslot
